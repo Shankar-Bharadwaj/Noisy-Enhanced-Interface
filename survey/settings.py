@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-sv0@%xu8z96g9b#q)_9a&r1d9!1mkwjw43xcubimz+v2^+ni4^'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['survey.onrender.com']
 
 
 # Application definition
@@ -130,9 +130,21 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 import firebase_admin
 from firebase_admin import credentials
 
-cred = credentials.Certificate(os.path.join(BASE_DIR, 'serviceAccountKey.json'))
+cred = credentials.Certificate({
+  "type": os.environ.get('FIREBASE_TYPE'),
+  "project_id": os.environ.get('FIREBASE_PROJECT_ID'),
+  "private_key_id": os.environ.get('FIREBASE_PRIVATE_KEY_ID'),
+  "private_key": os.environ.get('FIREBASE_PRIVATE_KEY').replace('\\n', '\n'),
+  "client_email": os.environ.get('FIREBASE_CLIENT_EMAIL'),
+  "client_id": os.environ.get('FIREBASE_CLIENT_ID'),
+  "auth_uri": os.environ.get('FIREBASE_AUTH_URI'),
+  "token_uri": os.environ.get('FIREBASE_TOKEN_URI'),
+  "auth_provider_x509_cert_url": os.environ.get('FIREBASE_AUTH_PROVIDER_X509_CERT_URL'),
+  "client_x509_cert_url": os.environ.get('FIREBASE_CLIENT_X509_CERT_URL')
+})
+
 firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://noisy-enhanced-survey-default-rtdb.firebaseio.com/'
+  'databaseURL': os.environ.get('FIREBASE_DATABASE_URL')
 })
 
 MEDIA_URL = '/media/'
