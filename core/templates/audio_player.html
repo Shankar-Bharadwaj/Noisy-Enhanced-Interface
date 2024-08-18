@@ -11,15 +11,18 @@
         
         {% for audio_set in audio_files %}
             <h2>Audio Set {{ forloop.counter }}</h2>
+            
             {% for audio in audio_set %}
                 <audio controls>
-                    <source src="{{ MEDIA_URL }}audio/{{ audio }}" type="audio/wav">
+                    <source src="{{ audio.url }}" type="audio/wav">
                     Your browser does not support the audio element.
                 </audio>
                 <br>
             {% endfor %}
-            <!-- Add a hidden input for each audio set -->
-            <input type="hidden" name="audio_set_{{ forloop.counter }}" value="">
+            
+            <!-- Add a hidden input to identify the audio set -->
+            <input type="hidden" name="audio_set_{{ forloop.counter }}" value="audio_set_{{ forloop.counter }}">
+            
             <label>Choose your option for Audio Set {{ forloop.counter }}:</label><br>
             <input type="radio" id="option1_{{ forloop.counter }}" name="option_{{ forloop.counter }}" value="1" required>
             <label for="option1_{{ forloop.counter }}">1</label><br>
@@ -29,9 +32,11 @@
             <label for="option3_{{ forloop.counter }}">3</label><br>
             <input type="radio" id="none_{{ forloop.counter }}" name="option_{{ forloop.counter }}" value="None" required>
             <label for="none_{{ forloop.counter }}">None of the above</label><br><br>
+            
         {% endfor %}
         
         <button type="submit">Submit</button>
     </form>
+    
 </body>
 </html>

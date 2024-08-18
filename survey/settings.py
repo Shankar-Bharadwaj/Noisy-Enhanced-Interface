@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['survey.onrender.com']
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -128,7 +132,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 import firebase_admin
-from firebase_admin import credentials
+from firebase_admin import credentials, storage
 
 cred = credentials.Certificate({
   "type": os.environ.get('FIREBASE_TYPE'),
@@ -144,8 +148,12 @@ cred = credentials.Certificate({
 })
 
 firebase_admin.initialize_app(cred, {
-  'databaseURL': os.environ.get('FIREBASE_DATABASE_URL')
+  'databaseURL': os.environ.get('FIREBASE_DATABASE_URL'),
+  'storageBucket': os.environ.get('FIREBASE_STORAGE_BUCKET')
 })
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# For production environment
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+MEDIA_URL = os.environ.get('MEDIA_URL')
