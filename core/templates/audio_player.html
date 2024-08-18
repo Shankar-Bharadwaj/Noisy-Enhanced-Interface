@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Audio Player</title>
+</head>
+<body>
+    <h1>Hello, {{ user_name }}</h1>
+    {% for audio_set in audio_files %}
+        <h2>Audio Set {{ forloop.counter }}</h2>
+        {% for audio in audio_set %}
+            <audio controls>
+                <source src="{{ MEDIA_URL }}audio/{{ audio }}" type="audio/wav">
+                Your browser does not support the audio element.
+            </audio>
+            <br>
+        {% endfor %}
+        <form method="post" action="{% url 'submit_response' %}">
+            {% csrf_token %}
+            <input type="hidden" name="audio_set_index" value="{{ forloop.counter }}">
+            <label>Choose your option:</label><br>
+            <input type="radio" id="option1" name="option" value="1" required>
+            <label for="option1">1</label><br>
+            <input type="radio" id="option2" name="option" value="2" required>
+            <label for="option2">2</label><br>
+            <input type="radio" id="option3" name="option" value="3" required>
+            <label for="option3">3</label><br>
+            <input type="radio" id="none" name="option" value="None" required>
+            <label for="none">None of the above</label><br><br>
+            <button type="submit">Submit</button>
+        </form>
+    {% endfor %}
+</body>
+</html>
