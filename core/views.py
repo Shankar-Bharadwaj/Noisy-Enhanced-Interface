@@ -22,15 +22,18 @@ def get_user_details(request):
 
         audio_files = {}
         for blob in blobs:
-            if not blob.name.endswith('/'):  # Exclude directories
+            if not blob.name.endswith('/'):
                 # Extract folder and file name
                 parts = blob.name.split('/')
                 if len(parts) > 2:
                     folder = parts[2]
                     file_name = '/'.join(parts[3:])
+
+                    # Extract the word
+                    word = file_name.split('_')[1]
                     
                     # Construct the URL
-                    encoded_name = quote(blob.name, safe='')  # URL encode the blob name
+                    encoded_name = quote(blob.name, safe='')
                     url = f"{settings.MEDIA_URL}{encoded_name}?alt=media"
                     
                     # Add to the dictionary
@@ -38,7 +41,8 @@ def get_user_details(request):
                         audio_files[folder] = []
                     audio_files[folder].append({
                         'name': file_name,
-                        'url': url
+                        'url': url,
+                        'word': word
                     })
 
         grouped_files = [audio_files[folder] for folder in sorted(audio_files)]
@@ -59,7 +63,7 @@ def get_user_details(request):
             'audio_files': grouped_files,
             'user_name': request.session.get('user_name'),
             'user_email': request.session.get('user_email'),
-            'MEDIA_URL': settings.MEDIA_URL
+            'MEDIA_URL': settings.MEDIA_URL,
         })
 
     # if return != 'POST'
