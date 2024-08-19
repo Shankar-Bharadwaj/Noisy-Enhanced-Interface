@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import get_user_details, audio_player, submit_response
+from core.views import get_user_details, audio_player, submit_response, home
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -25,4 +25,5 @@ urlpatterns = [
     path('user-details/', get_user_details, name='get_user_details'),
     path('audio-player/', audio_player, name='audio_player'),
     path('submit-response/', submit_response, name='submit_response'),
+    path('', home, name='home'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

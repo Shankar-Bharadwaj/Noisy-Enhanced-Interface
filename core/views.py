@@ -5,6 +5,10 @@ from django.conf import settings
 from urllib.parse import quote
 
 
+def home(request):
+    return render(request, 'home.html')
+
+
 def get_user_details(request):
     if request.method == "POST":
         user_name = request.POST.get('name')
