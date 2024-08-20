@@ -3,6 +3,7 @@ from firebase_admin import db, storage
 import os
 from django.conf import settings
 from urllib.parse import quote
+import re
 
 
 def home(request):
@@ -90,6 +91,12 @@ def audio_player(request):
     })
 
 
+def sanitize(email):
+    """Sanitize path to remove illegal characters for Firebase."""
+    ind = email.index('@')
+    return email[:ind]
+
+
 def submit_response(request):
     if request.method == "POST":
         user_name = request.session.get('user_name')
@@ -103,7 +110,8 @@ def submit_response(request):
                 responses[f'set_{audio_set_index}'] = value
 
         # Reference to the Firebase RTDB
-        ref = db.reference(f'responses/{user_name}')
+        mail = sanitize(user_email)
+        ref = db.reference(f'responses/{mail}')
         ref.set({
             'user_name': user_name,
             'responses': responses
