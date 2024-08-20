@@ -90,51 +90,55 @@
 <body>
     <h1>Welcome, {{ user_name }}</h1>
     
-    <form method="post" action="{% url 'submit_response' %}">
+    <form method="post" action="{% url 'submit_response' page_number %}">
         {% csrf_token %}
         
-        {% for audio_set in audio_files %}
-            <div class="audio-set">
-                <h2>Audio Set {{ forloop.counter }}</h2>
-                
-                <!-- Top audio -->
-                <div class="top-audio">
-                    <audio controls>
-                        <source src="{{ audio_set.0.url }}" type="audio/wav">
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-
-                <!-- Display the question with the extracted word -->
-                <div class="question">
-                    Which of the following audios is closer to the above audio? <br>
-                    <p class="word_info">(Word: {{ audio_set.0.word }})</p>
-                </div>
-                
-                <!-- Grid of audio options and None of the above -->
-                <div class="option-grid">
-                    {% for audio in audio_set|slice:"1:" %}
-                        <div class="audio-option">
-                            <audio controls>
-                                <source src="{{ audio.url }}" type="audio/wav">
-                                Your browser does not support the audio element.
-                            </audio>
-                            <input type="radio" id="option{{ forloop.counter }}_{{ forloop.parentloop.counter }}" name="option_{{ forloop.parentloop.counter }}" value="{{ forloop.counter }}" required>
-                            <label for="option{{ forloop.counter }}_{{ forloop.parentloop.counter }}">Option {{ forloop.counter }}</label>
-                        </div>
-                    {% endfor %}
-                    
-                    <!-- None of the above option -->
-                    <div class="none-option">
-                        <input type="radio" id="none_{{ forloop.counter }}" name="option_{{ forloop.counter }}" value="None" required>
-                        <label for="none_{{ forloop.counter }}">None of the above</label>
-                    </div>
-                </div>
-                
+        <div class="audio-set">
+            <h2>Audio Set {{ page_number }}</h2>
+            
+            <!-- Top audio -->
+            <div class="top-audio">
+                <audio controls>
+                    <source src="{{ audio_set.0.url }}" type="audio/wav">
+                    Your browser does not support the audio element.
+                </audio>
             </div>
-        {% endfor %}
-        
-        <button type="submit">Submit</button>
+
+            <!-- Display the question with the extracted word -->
+            <div class="question">
+                Which of the following audios is closer to the above audio? <br>
+                <p class="word_info">(Word: {{ audio_set.0.word }})</p>
+            </div>
+            
+            <!-- Grid of audio options and None of the above -->
+            <div class="option-grid">
+                {% for audio in audio_set|slice:"1:" %}
+                    <div class="audio-option">
+                        <audio controls>
+                            <source src="{{ audio.url }}" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <input type="radio" id="option{{ forloop.counter }}_{{ page_number }}" name="option_{{ page_number }}" value="{{ forloop.counter }}" required>
+                        <label for="option{{ forloop.counter }}_{{ page_number }}">Option {{ forloop.counter }}</label>
+                    </div>
+                {% endfor %}
+                
+                <!-- None of the above option -->
+                <div class="none-option">
+                    <input type="radio" id="none_{{ page_number }}" name="option_{{ page_number }}" value="None" required>
+                    <label for="none_{{ page_number }}">None of the above</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation">
+            {% if has_next %}
+                <button type="submit">Next</button>
+            {% else %}
+                <button type="submit" formaction="{% url 'submit_response' page_number %}">Submit</button>
+            {% endif %}
+        </div>
     </form>
     
 </body>

@@ -16,14 +16,15 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from core.views import get_user_details, audio_player, submit_response, home
+from core.views import get_user_details, audio_player, submit_response, home, success_page
 from django.conf.urls.static import static
 from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('user-details/', get_user_details, name='get_user_details'),
-    path('audio-player/', audio_player, name='audio_player'),
-    path('submit-response/', submit_response, name='submit_response'),
+    path('audio-player/<int:page_number>/', audio_player, name='audio_player'),
+    path('submit-response/<int:page_number>/', submit_response, name='submit_response'),
+    path('thank-you/', success_page, name='success_page'),
     path('', home, name='home'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
