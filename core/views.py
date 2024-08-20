@@ -3,6 +3,7 @@ from firebase_admin import db, storage
 import os
 from django.conf import settings
 from urllib.parse import quote
+import random
 
 
 def home(request):
@@ -34,18 +35,31 @@ def get_user_details(request):
                     # Construct the URL
                     encoded_name = quote(blob.name, safe='')
                     url = f"{settings.MEDIA_URL}{encoded_name}?alt=media"
+
+
                     
                     # Add to the dictionary
                     if folder not in audio_files:
                         audio_files[folder] = []
+                    
+                    if '-' in folder:
+                        language = 'ITA'
+                    else:
+                        language = 'GER'
+
                     audio_files[folder].append({
                         'name': file_name,
                         'url': url,
-                        'word': word
+                        'word': word,
+                        'language': language
                     })
 
+        # Shuffle the order of audio folders
+        folder_keys = list(audio_files.keys())
+        random.shuffle(folder_keys)
+
         # Group files for pagination, each folder is one group
-        grouped_files = [audio_files[folder] for folder in sorted(audio_files)]
+        grouped_files = [audio_files[folder] for folder in folder_keys]
         request.session['grouped_files'] = grouped_files  # Store in session for pagination
 
         return redirect('audio_player', page_number=1)
@@ -89,13 +103,21 @@ def submit_response(request, page_number=None):
     if request.method == "POST":
         user_name = request.session.get('user_name')
         user_email = request.session.get('user_email')
+        grouped_files = request.session.get('grouped_files')
 
         # Iterate through all audio sets and collect responses
         responses = {}
         for key, value in request.POST.items():
             if key.startswith('option_'):
                 audio_set_index = key.split('_')[1]
-                responses[f'set_{audio_set_index}'] = value
+                audio_details = grouped_files[int(audio_set_index)-1][int(value)] if value!='None' else 'None'
+                selected_audio = audio_details['name']
+                language = audio_details['language']
+                responses[f'set_{audio_set_index}'] = {
+                    'selected_option': value,
+                    'file_name': selected_audio,
+                    'language': language
+                }
 
         # Reference to the Firebase RTDB
         mail = sanitize(user_email)
