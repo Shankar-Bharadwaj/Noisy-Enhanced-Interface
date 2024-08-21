@@ -28,7 +28,7 @@
             margin-bottom: 20px;
         }
 
-        .question {
+        .word {
             text-align: center;
             margin-bottom: 20px;
         }
@@ -38,18 +38,24 @@
             font-size: 12px;
         }
 
-        .option-grid {
+        .evaluation-set-container {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 50px;
+        }
+
+        .evaluation-set {
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .evaluation-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 20px;
             justify-items: center;
             align-items: center;
-        }
-
-        @media (max-width: 768px) {
-            .option-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         .audio-option {
@@ -65,15 +71,28 @@
         }
 
         .audio-option label {
-            display: block;
             margin-top: 8px;
         }
 
-        .none-option {
-            display: flex;
-            flex-direction: column;
+        .question {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .option-grid {
+            display: grid;
+            grid-template-columns: 1fr; 
+            gap: 10px;
+            justify-items: left;
             align-items: center;
-            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .evaluation-grid,
+            .option-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         button {
@@ -91,6 +110,10 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        .audio-number {
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -100,9 +123,14 @@
         {% csrf_token %}
         
         <div class="audio-set">
-            <h2>Audio Set {{ page_number }}</h2>
+            <h2>Reference Audio - {{ page_number }}</h2>
+
+            <!-- Display the extracted word -->
+            <div class="word">
+                <p class="word_info">(Word: {{ audio_set.0.word }})</p>
+            </div>
             
-            <!-- Top audio -->
+            <!-- Top audio (Reference Audio) -->
             <div class="top-audio">
                 <audio controls>
                     <source src="{{ audio_set.0.url }}" type="audio/wav">
@@ -110,30 +138,41 @@
                 </audio>
             </div>
 
-            <!-- Display the question with the extracted word -->
-            <div class="question">
-                Which of the following audios is closer to the above audio? <br>
-                <p class="word_info">(Word: {{ audio_set.0.word }})</p>
-            </div>
-            
-            <!-- Grid of audio options and None of the above -->
-            <div class="option-grid">
-                {% for audio in audio_set|slice:"1:" %}
-                    <div class="audio-option">
-                        <audio controls>
-                            <source src="{{ audio.url }}" type="audio/wav">
-                            Your browser does not support the audio element.
-                        </audio>
-                        <input type="radio" id="option{{ forloop.counter }}_{{ page_number }}" name="option_{{ page_number }}" value="{{ forloop.counter }}" required>
-                        <label for="option{{ forloop.counter }}_{{ page_number }}">Option {{ forloop.counter }}</label>
-                    </div>
-                {% endfor %}
+            <!-- Evaluation Set Label -->
+            <div class="evaluation-set-container">
+                <h2>Evaluation Set</h2>
                 
-                <!-- None of the above option -->
-                <div class="none-option">
-                    <input type="radio" id="none_{{ page_number }}" name="option_{{ page_number }}" value="None" required>
-                    <label for="none_{{ page_number }}">None of the above</label>
+                <!-- Evaluation audios in one row -->
+                <div class="evaluation-grid">
+                    {% for audio in audio_set|slice:"1:" %}
+                        <div class="audio-option">
+                            <audio controls>
+                                <source src="{{ audio.url }}" type="audio/wav">
+                                Your browser does not support the audio element.
+                            </audio>
+                            <div class="audio-number">Audio {{ forloop.counter }}</div>
+                        </div>
+                    {% endfor %}
                 </div>
+            </div>
+        </div>
+
+        <!-- Display the question with options -->
+        <div class="question">
+            Which of the audios from the evaluation set is closer to the reference audio?
+        </div>
+        <div class="option-grid">
+            {% for audio in audio_set|slice:"1:" %}
+                <div class="audio-option">
+                    <input type="radio" id="option{{ forloop.counter }}_{{ page_number }}" name="option_{{ page_number }}" value="{{ forloop.counter }}" required>
+                    <label for="option{{ forloop.counter }}_{{ page_number }}">Audio {{ forloop.counter }}</label>
+                </div>
+            {% endfor %}
+            
+            <!-- None of the above option -->
+            <div class="audio-option">
+                <input type="radio" id="none_{{ page_number }}" name="option_{{ page_number }}" value="None" required>
+                <label for="none_{{ page_number }}">None of the above</label>
             </div>
         </div>
 
