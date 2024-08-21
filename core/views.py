@@ -162,4 +162,5 @@ def submit_response(request, page_number=None):
 
 
 def success_page(request):
+    request.session.flush()
     return render(request, 'thank_you.html')
