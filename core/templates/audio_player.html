@@ -79,6 +79,13 @@
             font-weight: bold;
         }
 
+        .note {
+            margin-top: -15px;
+            font-size: 14px;
+            /* color: #666; */
+            font-style: italic;
+        }
+
         .option-grid {
             display: grid;
             grid-template-columns: 1fr; 
@@ -161,6 +168,12 @@
         <div class="question">
             Which of the audios from the evaluation set is similar to the reference audio?
         </div>
+
+        <!-- Add the note to ignore noise -->
+        <div class="note">
+            (Please ignore any background noise in the audio samples.)
+        </div>
+        
         <div class="option-grid">
             {% for audio in audio_set|slice:"1:" %}
                 <div class="audio-option">
