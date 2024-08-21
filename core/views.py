@@ -79,6 +79,14 @@ def audio_player(request, page_number=1):
         return redirect('audio_player', page_number=1)
     
     audio_set = grouped_files[page_number - 1]
+
+    # Randomise the audio options
+    optional_audios = audio_set[1:]
+    random.shuffle(optional_audios)
+
+    audio_set = [audio_set[0]] + optional_audios
+
+    request.session['audio_set'] = audio_set
     
     context = {
         'user_name': request.session.get('user_name'),
@@ -104,15 +112,20 @@ def submit_response(request, page_number=None):
         user_name = request.session.get('user_name')
         user_email = request.session.get('user_email')
         grouped_files = request.session.get('grouped_files')
+        audio_set = request.session.get('audio_set')
 
         # Iterate through all audio sets and collect responses
         responses = {}
         for key, value in request.POST.items():
             if key.startswith('option_'):
                 audio_set_index = key.split('_')[1]
-                audio_details = grouped_files[int(audio_set_index)-1][int(value)] if value!='None' else 'None'
-                selected_audio = audio_details['name']
-                language = audio_details['language']
+                if value!='None':
+                    audio_details = audio_set[int(value)]
+                    selected_audio = audio_details['name']
+                    language = audio_details['language']
+                else:
+                    selected_audio = audio_set[0]['name']
+                    language = 'None'
                 responses[f'set_{audio_set_index}'] = {
                     'selected_option': value,
                     'file_name': selected_audio,
