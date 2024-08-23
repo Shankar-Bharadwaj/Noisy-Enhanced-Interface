@@ -11,6 +11,7 @@
             color: #333;
             text-align: center;
         }
+
         .container {
             max-width: 800px;
             margin: 10% auto;
@@ -19,25 +20,42 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #007BFF;
         }
+
         form {
             font-size: 18px;
         }
+
         label {
-            margin: 10px;
+            display: inline-block;
+            width: 80px;
             text-align: left;
+            margin-right: 10px;
         }
+
         input[type="text"],
-        input[type="email"] {
-            width: 80%;
+        input[type="email"],
+        select {
+            width: 60%;
             padding: 10px;
             margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
         }
+
+        input[type="number"] {
+            width: 60%; 
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
         button {
             background-color: #007BFF;
             color: #fff;
@@ -47,9 +65,11 @@
             cursor: pointer;
             font-size: 16px;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         .note {
             margin-top: -15px;
             margin-bottom: 20px;
@@ -68,6 +88,16 @@
             <input type="text" id="name" name="name" required><br><br>
             <label for="email">Email:</label>
             <input type="email" id="email" name="email" required><br><br>
+            <label for="age">Age:</label>
+            <input type="number" id="age" name="age" required><br><br>
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="">Select Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+                <option value="prefer_not_to_say">Prefer not to say</option>
+            </select><br><br>
             <p class="note">Please use headphones/earphones.</p>
             <p class="note">Please ignore the noise in the audio samples and focus on word pronunciations.</p>
             <button type="submit">Start</button>

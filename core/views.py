@@ -15,8 +15,12 @@ def get_user_details(request):
     if request.method == "POST":
         user_name = request.POST.get('name')
         user_email = request.POST.get('email')
+        user_age = request.POST.get('age')
+        user_gender = request.POST.get('gender')
         request.session['user_name'] = user_name
         request.session['user_email'] = user_email
+        request.session['user_age'] = user_age
+        request.session['user_gender'] = user_gender
 
         # Get audio files from Firebase Storage
         bucket = storage.bucket()
@@ -61,7 +65,7 @@ def get_user_details(request):
 
         # Group files for pagination, each folder is one group
         grouped_files = [audio_files[folder] for folder in folder_keys]
-        request.session['grouped_files'] = grouped_files  # Store in session for pagination
+        request.session['grouped_files'] = grouped_files
 
         return redirect('audio_player', page_number=1)
 
@@ -114,6 +118,10 @@ def submit_response(request, page_number=None):
     if request.method == "POST":
         user_name = request.session.get('user_name')
         user_email = request.session.get('user_email')
+        user_age = request.session.get('user_age')
+        print(user_age)
+        user_gender = request.session.get('user_gender')
+        print(user_gender)
         grouped_files = request.session.get('grouped_files')
         audio_set = request.session.get('audio_set')
 
@@ -148,6 +156,8 @@ def submit_response(request, page_number=None):
         else:
             ref.set({
                 'user_name': user_name,
+                'user_age': user_age,
+                'user_gender': user_gender,
                 'responses': responses
             })
 
