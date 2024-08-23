@@ -4,6 +4,7 @@ import os
 from django.conf import settings
 from urllib.parse import quote
 import random
+import re
 
 
 def home(request):
@@ -104,7 +105,9 @@ def audio_player(request, page_number=1):
 def sanitize(email):
     """Sanitize email to remove illegal characters for Firebase."""
     ind = email.index('@')
-    return email[:ind]
+    local_part = email[:ind]
+    sanitized_email = re.sub(r'[^a-zA-Z0-9]', '', local_part)
+    return sanitized_email
 
 
 def submit_response(request, page_number=None):
